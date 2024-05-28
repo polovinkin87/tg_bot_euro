@@ -5,4 +5,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache -r /app/requirements.txt
 COPY . /app
+CMD export LC_ALL="en_US.UTF-8"
+CMD dpkg-reconfigure locales
 CMD python3 /app/main.py
