@@ -203,7 +203,8 @@ async def add_owner(message: types.Message, state: FSMContext):
         # например:
         if 4 >= len(message.text) >= 150:
             await message.answer(
-                "Название товара не должно превышать 150 символов\nили быть менее 5ти символов. \n Введите заново"
+                "Название команды не должно превышать 150 символов\nили быть менее 5ти символов."
+                "\n Введите заново"
             )
             return
 
@@ -224,9 +225,10 @@ async def add_guest(message: types.Message, state: FSMContext, session: AsyncSes
     if message.text == "." and AddGame.game_for_change:
         await state.update_data(guest=AddGame.game_for_change.guest)
     else:
-        if 4 >= len(message.text):
+        if 4 >= len(message.text) >= 150:
             await message.answer(
-                "Слишком короткое описание. \n Введите заново"
+                "Название команды не должно превышать 150 символов\nили быть менее 5ти символов."
+                "\n Введите заново"
             )
             return
         await state.update_data(guest=message.text)
@@ -299,7 +301,7 @@ async def group_choice(callback: types.CallbackQuery, state: FSMContext, session
     if int(callback.data) in [group.id for group in await orm_get_groups(session)]:
         await callback.answer()
         await state.update_data(group=callback.data)
-        await callback.message.answer("Теперь введите дату и время проведения матча в формате 'ГГГ-ММ-ДД ЧЧ:ММ'")
+        await callback.message.answer("Теперь введите дату и время проведения матча в формате 'ГГГГ-ММ-ДД ЧЧ:ММ'")
         await state.set_state(AddGame.date_time)
     else:
         await callback.message.answer('Выберите группу нажатием на кнопку.')

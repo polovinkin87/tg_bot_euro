@@ -11,8 +11,6 @@ from kbds.inline import (
 from utils.paginator import Paginator
 
 image_id = 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA'
-
-
 # image_id = 'AgACAgIAAxkBAANhZkXq0oL5SexKWFK8olhljU128YUAAizgMRtdzChKUjzXlpMJKfsBAAMCAAN5AAM1BA'
 
 

@@ -46,10 +46,11 @@ class GetForecasts(StatesGroup):
 async def get_forecasts(
         callback: types.CallbackQuery, callback_data: MenuCallbackData, state: FSMContext, session: AsyncSession):
     game = await orm_get_game(session, callback_data.game_id)
+    user = await orm_check_user(session, callback_data.user_id)
     GetForecasts.forecast_for_change = game
     await callback.message.delete_reply_markup()
     await callback.message.answer(f'Введите кол-во голов {GetForecasts.forecast_for_change.owner}')
-    await state.update_data(user_id=callback_data.user_id, game_id=callback_data.game_id)
+    await state.update_data(user_id=user.id, game_id=callback_data.game_id)
     await state.set_state(GetForecasts.goals_owner)
 
 
@@ -78,18 +79,19 @@ async def input_guest_forecasts(message: types.Message, state: FSMContext, sessi
         await state.update_data(guest=int(message.text))
         data = await state.get_data()
         media, reply_markup = await get_menu_content(session, level=0, menu_name="main")
-        await orm_add_to_forecast(session, data['user_id'], data['game_id'], data['owner'], data['guest'])
-        await message.answer_photo(photo=media.media, caption="Прогноз добавлен", reply_markup=reply_markup)
+        if await orm_add_to_forecast(session, data['user_id'], data['game_id'], data['owner'], data['guest']):
+            await message.answer_photo(photo=media.media, caption="Прогноз добавлен", reply_markup=reply_markup)
+        else:
+            await message.answer_photo(photo=media.media, caption="Прогноз изменен", reply_markup=reply_markup)
         await state.clear()
+        GetForecasts.forecast_for_change = None
     else:
         await message.answer('К сожалению ты ввел не допустимые данные ☹️, введи число')
-        await state.set_state(GetForecasts.goals_owner)
-
-    GetForecasts.forecast_for_change = None
+        await state.set_state(GetForecasts.goals_guest)
 
 
 # Хендлер для отлова некорректных вводов для состояния goals_guest
-@user_private_router.message(GetForecasts.goals_owner)
+@user_private_router.message(GetForecasts.goals_guest)
 async def input_guest_forecasts2(message: types.Message, state: FSMContext):
     await message.answer('К сожалению ты ввел не допустимые данные ☹️, введи кол-во голов заново')
 

@@ -88,12 +88,13 @@ async def orm_get_user(session: AsyncSession):
 async def orm_check_user(session: AsyncSession, user_id: int):
     query = select(User).where(User.user_id == user_id)
     result = await session.execute(query)
-    if result.first() is None:
-        await session.commit()
-        return False
-    else:
-        await session.commit()
-        return True
+    return result.scalar()
+    # if result.first() is None:
+    #     await session.commit()
+    #     return False
+    # else:
+    #     await session.commit()
+    #     return True
 
 
 async def orm_add_user(
