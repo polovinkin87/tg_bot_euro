@@ -4,14 +4,14 @@ from aiogram.types import InputMediaPhoto
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.orm_query import (
-    orm_get_groups, orm_get_games)
+    orm_get_groups, orm_get_games, orm_get_forecasts_by_two, orm_check_user)
 from kbds.inline import (
     get_user_main_btns, get_user_forecasts_btns, get_user_my_forecasts_btns, get_games_btns,
 )
 from utils.paginator import Paginator
 
-image_id = 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA'
-# image_id = 'AgACAgIAAxkBAANhZkXq0oL5SexKWFK8olhljU128YUAAizgMRtdzChKUjzXlpMJKfsBAAMCAAN5AAM1BA'
+# image_id = 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA'
+image_id = 'AgACAgIAAxkBAANhZkXq0oL5SexKWFK8olhljU128YUAAizgMRtdzChKUjzXlpMJKfsBAAMCAAN5AAM1BA'
 
 
 async def main_menu(level):
@@ -48,9 +48,9 @@ def pages(paginator: Paginator):
 
 
 async def forecasts_group_menu(session, level, group_id, page, user_id):
-    games = await orm_get_games(session, group_id=group_id)
+    games = await orm_get_forecasts_by_two(session, user_id=user_id, group_id=group_id)
 
-    paginator = Paginator(games, page=page)
+    paginator = Paginator(games, page=page, per_page=3)
     games = paginator.get_page()
 
     image = InputMediaPhoto(media=image_id, caption='Выбери матч 👇')

@@ -5,7 +5,8 @@ from aiogram.fsm.state import StatesGroup, State
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.orm_query import orm_add_to_forecast, orm_get_game, orm_update_forecast, orm_check_user
+from database.orm_query import orm_get_game, orm_update_forecast, orm_check_user, \
+    orm_get_forecasts, orm_add_forecast
 from filters.chat_types import ChatTypeFilter
 from handlers.menu_processing import get_menu_content
 
@@ -45,11 +46,14 @@ class GetForecasts(StatesGroup):
 @user_private_router.callback_query(StateFilter(None), MenuCallbackData.filter(F.game_id))
 async def get_forecasts(
         callback: types.CallbackQuery, callback_data: MenuCallbackData, state: FSMContext, session: AsyncSession):
-    game = await orm_get_game(session, callback_data.game_id)
     user = await orm_check_user(session, callback_data.user_id)
+    game = await orm_get_game(session, callback_data.game_id)
+    forecast = await orm_get_forecasts(session, user.id, callback_data.game_id)
     GetForecasts.forecast_for_change = game
     await callback.message.delete_reply_markup()
     await callback.message.answer(f'Введите кол-во голов {GetForecasts.forecast_for_change.owner}')
+    if forecast:
+        await state.update_data(forecast_id=forecast.id)
     await state.update_data(user_id=user.id, game_id=callback_data.game_id)
     await state.set_state(GetForecasts.goals_owner)
 
@@ -79,10 +83,12 @@ async def input_guest_forecasts(message: types.Message, state: FSMContext, sessi
         await state.update_data(guest=int(message.text))
         data = await state.get_data()
         media, reply_markup = await get_menu_content(session, level=0, menu_name="main")
-        if await orm_add_to_forecast(session, data['user_id'], data['game_id'], data['owner'], data['guest']):
-            await message.answer_photo(photo=media.media, caption="Прогноз добавлен", reply_markup=reply_markup)
-        else:
+        if data.get('forecast_id'):
+            await orm_update_forecast(session, data['forecast_id'], data['owner'], data['guest'])
             await message.answer_photo(photo=media.media, caption="Прогноз изменен", reply_markup=reply_markup)
+        else:
+            await orm_add_forecast(session, data['user_id'], data['game_id'], data['owner'], data['guest'])
+            await message.answer_photo(photo=media.media, caption="Прогноз добавлен", reply_markup=reply_markup)
         await state.clear()
         GetForecasts.forecast_for_change = None
     else:

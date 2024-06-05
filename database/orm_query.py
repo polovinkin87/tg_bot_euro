@@ -1,6 +1,8 @@
+import datetime
+
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, join, contains_eager, selectinload, aliased
 
 from database.models import Group, Game, Forecast, User
 
@@ -35,7 +37,7 @@ async def orm_add_game(session: AsyncSession, data: dict):
         guest=data["guest"],
         goals_owner=data["goals_owner"],
         goals_guest=data["goals_guest"],
-        date_time=data["date_time"],
+        date_time=datetime.datetime.strptime(data["date_time"], '%Y-%m-%d %H:%M'),
         group_id=int(data["group"]),
     )
     session.add(obj)
@@ -63,7 +65,7 @@ async def orm_update_game(session: AsyncSession, game_id: int, data):
             guest=data["guest"],
             goals_owner=int(data["goals_owner"]),
             goals_guest=int(data["goals_guest"]),
-            date_time=data["date_time"],
+            date_time=datetime.datetime.strptime(data["date_time"], '%Y-%m-%d %H:%M'),
             group_id=int(data["group"]),
         )
     )
@@ -89,22 +91,9 @@ async def orm_check_user(session: AsyncSession, user_id: int):
     query = select(User).where(User.user_id == user_id)
     result = await session.execute(query)
     return result.scalar()
-    # if result.first() is None:
-    #     await session.commit()
-    #     return False
-    # else:
-    #     await session.commit()
-    #     return True
 
 
-async def orm_add_user(
-        session: AsyncSession,
-        # user_id: int,
-        # first_name: str or None = None,
-        # last_name: str or None = None,
-        # phone: str or None = None,
-        data
-):
+async def orm_add_user(session: AsyncSession, data):
     session.add(
         User(user_id=data['user_id'], first_name=data['first_name'], last_name=data['last_name'], phone=data['phone'])
     )
@@ -113,41 +102,41 @@ async def orm_add_user(
 
 ######################## Работа с прогнозами #######################################
 
-async def orm_add_to_forecast(session: AsyncSession, user_id: int, game_id: int, owner: int, guest: int):
-    query = select(Forecast).where(Forecast.user_id == user_id, Forecast.game_id == game_id)
-    forecast = await session.execute(query)
-    forecast = forecast.scalar()
-    if forecast:
-        await session.commit()
-        return False
-    else:
-        session.add(Forecast(user_id=user_id, game_id=game_id, owner=owner, guest=guest))
-        await session.commit()
-        return True
+async def orm_add_forecast(session: AsyncSession, user_id: int, game_id: int, owner: int, guest: int):
+    session.add(Forecast(user_id=user_id, game_id=game_id, owner=owner, guest=guest))
+    await session.commit()
 
 
-async def orm_get_forecasts(session: AsyncSession, user_id):
-    # query = select(Forecast).where(Forecast.user_id == int(user_id))
-    query = select(Forecast).filter(Forecast.user_id == user_id).options(joinedload(Forecast.game))
+async def orm_get_forecasts(session: AsyncSession, user_id: int, game_id: int):
+    query = select(Forecast).filter(Forecast.user_id == user_id, Forecast.game_id == game_id)
+    result = await session.execute(query)
+    return result.scalar()
+
+
+async def orm_get_all_forecasts(session: AsyncSession, game_id: int):
+    query = select(Forecast).filter(Forecast.game_id == game_id).options(joinedload(Forecast.user))
     result = await session.execute(query)
     return result.scalars().all()
 
 
-# async def orm_get_forecast(session: AsyncSession, user_id: int, game_id: int):
-#     query = select(Forecast).where(Forecast.user_id == user_id, Forecast.game_id == game_id)
-#     result = await session.execute(query)
-#     return result.scalar()
+async def orm_get_forecasts_by_two(session: AsyncSession, user_id: int, group_id: int):
+    subquery = select(Forecast).join(User).filter(User.user_id == user_id).subquery()
+    alias = aliased(Forecast, subquery)
+
+    query = select(Game).outerjoin(Game.forecast.of_type(alias), ).filter(Game.group_id == group_id).options(
+        contains_eager(Game.forecast.of_type(alias)), )
+
+    result = await session.execute(query)
+    return result.unique().scalars().all()
 
 
-async def orm_update_forecast(session: AsyncSession, forecast_id: int, data):
+async def orm_update_forecast(session: AsyncSession, forecast_id: int, owner: int, guest: int):
     query = (
         update(Forecast)
         .where(Forecast.id == forecast_id)
         .values(
-            user_id=data["user"],
-            game_id=data["game"],
-            owner=int(data["owner"]),
-            guest=int(data["guest"]),
+            owner=owner,
+            guest=guest,
         )
     )
     await session.execute(query)

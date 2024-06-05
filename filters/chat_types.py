@@ -27,5 +27,4 @@ class UserAuth(Filter):
 
     async def __call__(self, message: types.Message, session: AsyncSession) -> bool:
         all_user_id_db = await orm_get_user(session)
-        print(all_user_id_db)
         return message.from_user.id not in [user.user_id for user in all_user_id_db]

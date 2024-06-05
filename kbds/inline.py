@@ -33,7 +33,7 @@ def get_user_forecasts_btns(*, level: int, sizes: tuple[int] = (1,)):
     keyboard = InlineKeyboardBuilder()
     btns = {
         "Мои прогнозы 🎲": "my_forecasts",
-        "Прогнозы участников 🎯": "all_forecasts",
+        "Все прогнозы 🎯": "all_forecasts",
     }
     for text, menu_name in btns.items():
         keyboard.add(InlineKeyboardButton(text=text,
@@ -59,10 +59,10 @@ def get_games_btns(*, level: int, group_id: int, page: int, pagination_btns: dic
     keyboard = InlineKeyboardBuilder()
     for game in games:
         keyboard.add(InlineKeyboardButton(
-            text=f"{game.owner} - {game.guest} {'' if game.goals_owner is None else game.goals_owner}"
-                 f"{'' if game.goals_owner is None else ':'}"
-                 f"{'' if game.goals_guest is None else game.goals_guest} "
-                 f"{game.date_time.strftime('%d %B %H:%M')}",
+            text=f"{game.owner} - {game.guest} "
+                 f"{'' if len(game.forecast) == 0 else game.forecast[0].owner}"
+                 f"{'' if len(game.forecast) == 0 else ':'}"
+                 f"{game.date_time.strftime('%d %B %H:%M') if len(game.forecast) == 0 else game.forecast[0].guest}",
             callback_data=MenuCallbackData(level=level, game_id=game.id, user_id=user_id).pack()))
 
     row = []

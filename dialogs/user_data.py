@@ -83,7 +83,7 @@ async def no_text(message: Message, widget: MessageInput, dialog_manager: Dialog
 async def check_phone(message: Message, widget: MessageInput, dialog_manager: DialogManager):
     if message.from_user.id == message.contact.user_id:
         dialog_manager.dialog_data.update(phone=message.contact.phone_number, user_id=message.from_user.id)
-        await orm_add_user(dialog_manager.start_data['session'], dialog_manager.dialog_data)
+        await orm_add_user(dialog_manager.middleware_data['session'], dialog_manager.dialog_data)
         await dialog_manager.done()
         await message.answer('Спасибо! Твои данные сохранены 👍')
 
@@ -138,4 +138,4 @@ start_dialog = Dialog(
 @dialogs_router.callback_query(MenuCallbackData.filter(F.menu_name == 'my_forecasts'))
 async def command_start_process(callback: types.CallbackQuery, callback_data: MenuCallbackData,
                                 dialog_manager: DialogManager, session: AsyncSession):
-    await dialog_manager.start(state=UserSG.first_name, mode=StartMode.RESET_STACK, data={'session': session})
+    await dialog_manager.start(state=UserSG.first_name, mode=StartMode.RESET_STACK)

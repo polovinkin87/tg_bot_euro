@@ -325,7 +325,7 @@ async def add_date_time(message: types.Message, state: FSMContext, session: Asyn
         except ValueError:
             await message.answer("Введите корректные дату и время проведения матча")
             return
-        await state.update_data(date_time=datetime.datetime.strptime(message.text, '%Y-%m-%d %H:%M'))
+        await state.update_data(date_time=message.text)
     data = await state.get_data()
     try:
         if AddGame.game_for_change:

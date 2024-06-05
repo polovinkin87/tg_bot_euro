@@ -6,9 +6,11 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram_dialog import setup_dialogs
+from aiogram.fsm.storage.redis import RedisStorage, Redis, DefaultKeyBuilder
 
 from dotenv import find_dotenv, load_dotenv
 
+from dialogs.all_forecasts import dialog_forecast_router, forecast_start_dialog, forecast_second_dialog
 from dialogs.user_data import start_dialog, dialogs_router
 from kbds.menu import set_main_menu
 
@@ -23,17 +25,21 @@ from handlers.user_group import user_group_router
 from handlers.admin_private import admin_router
 
 # from common.bot_cmds_list import private
-
-
 # ALLOWED_UPDATES = ['message', 'edited_message', 'callback_query']
+
+redis = Redis(host='localhost')
+storage: RedisStorage = RedisStorage(redis=redis, key_builder=DefaultKeyBuilder(with_destiny=True))
 
 bot = Bot(token=os.getenv('TOKEN'), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 bot.my_admins_list = []
 
-dp = Dispatcher()
+dp = Dispatcher(storage=storage)
 
 dp.include_router(dialogs_router)
 dp.include_router(start_dialog)
+dp.include_router(dialog_forecast_router)
+dp.include_router(forecast_start_dialog)
+dp.include_router(forecast_second_dialog)
 setup_dialogs(dp)
 dp.include_router(user_private_router)
 dp.include_router(user_group_router)
@@ -41,7 +47,7 @@ dp.include_router(admin_router)
 
 
 async def on_startup(bot):
-    await drop_db()
+    # await drop_db()
     print('бот завелся')
     await create_db()
 

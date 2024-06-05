@@ -7,6 +7,7 @@ from database.models import Base
 # from common.texts_for_db import categories, description_for_info_pages
 
 engine = create_async_engine(os.getenv('DB_URL'), echo=True)
+# engine = create_async_engine(os.getenv('DB_URL'))
 
 session_maker = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
