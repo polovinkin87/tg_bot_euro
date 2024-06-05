@@ -26,7 +26,6 @@ class Game(Base):
     group_id: Mapped[int] = mapped_column(ForeignKey('group.id', ondelete='CASCADE'), nullable=False)
 
     group: Mapped['Group'] = relationship(backref='game')
-    # forecasts: Mapped['Forecast'] = relationship(backref='game')
 
 
 class User(Base):

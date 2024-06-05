@@ -4,14 +4,14 @@ from aiogram.types import InputMediaPhoto
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.orm_query import (
-    orm_get_groups, orm_get_games, orm_get_forecasts_by_two, orm_check_user)
+    orm_get_groups, orm_get_forecasts_by_two)
 from kbds.inline import (
     get_user_main_btns, get_user_forecasts_btns, get_user_my_forecasts_btns, get_games_btns,
 )
 from utils.paginator import Paginator
 
-# image_id = 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA'
-image_id = 'AgACAgIAAxkBAANhZkXq0oL5SexKWFK8olhljU128YUAAizgMRtdzChKUjzXlpMJKfsBAAMCAAN5AAM1BA'
+image_id = 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA'
+# image_id = 'AgACAgIAAxkBAANhZkXq0oL5SexKWFK8olhljU128YUAAizgMRtdzChKUjzXlpMJKfsBAAMCAAN5AAM1BA'
 
 
 async def main_menu(level):

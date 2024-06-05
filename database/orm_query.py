@@ -2,7 +2,7 @@ import datetime
 
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, join, contains_eager, selectinload, aliased
+from sqlalchemy.orm import joinedload, contains_eager, aliased
 
 from database.models import Group, Game, Forecast, User
 
