@@ -27,7 +27,7 @@ from handlers.admin_private import admin_router
 # from common.bot_cmds_list import private
 # ALLOWED_UPDATES = ['message', 'edited_message', 'callback_query']
 
-redis = Redis(host='postgres')
+redis = Redis(host='0.0.0.0')
 storage: RedisStorage = RedisStorage(redis=redis, key_builder=DefaultKeyBuilder(with_destiny=True))
 
 bot = Bot(token=os.getenv('TOKEN'), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
