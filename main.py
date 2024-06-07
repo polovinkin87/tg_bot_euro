@@ -11,6 +11,9 @@ from aiogram.fsm.storage.redis import RedisStorage, Redis, DefaultKeyBuilder
 from dotenv import find_dotenv, load_dotenv
 
 from dialogs.all_forecasts import dialog_forecast_router, forecast_start_dialog, forecast_second_dialog
+from dialogs.calendar import dialogs_calendar_router, calendar_dialog
+from dialogs.rules import dialogs_rules_router, rules_dialog
+from dialogs.table import dialogs_table_router, table_dialog
 from dialogs.user_data import start_dialog, dialogs_router
 from kbds.menu import set_main_menu
 
@@ -28,6 +31,7 @@ from handlers.admin_private import admin_router
 # ALLOWED_UPDATES = ['message', 'edited_message', 'callback_query']
 
 redis = Redis(host='tg_bot_euro-redis_fsm-1')
+# redis = Redis(host='localhost')
 storage: RedisStorage = RedisStorage(redis=redis, key_builder=DefaultKeyBuilder(with_destiny=True))
 
 bot = Bot(token=os.getenv('TOKEN'), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
@@ -40,6 +44,12 @@ dp.include_router(start_dialog)
 dp.include_router(dialog_forecast_router)
 dp.include_router(forecast_start_dialog)
 dp.include_router(forecast_second_dialog)
+dp.include_router(dialogs_table_router)
+dp.include_router(table_dialog)
+dp.include_router(dialogs_calendar_router)
+dp.include_router(calendar_dialog)
+dp.include_router(dialogs_rules_router)
+dp.include_router(rules_dialog)
 setup_dialogs(dp)
 dp.include_router(user_private_router)
 dp.include_router(user_group_router)

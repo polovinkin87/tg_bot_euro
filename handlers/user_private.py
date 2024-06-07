@@ -1,12 +1,14 @@
-from aiogram import F, types, Router, Bot
+from aiogram import F, types, Router, Bot, Dispatcher
 from aiogram.filters import CommandStart, StateFilter, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
+from aiogram_dialog import DialogManager, StartMode
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.orm_query import orm_get_game, orm_update_forecast, orm_check_user, \
     orm_get_forecasts, orm_add_forecast
+from dialogs.table import TableSG
 from filters.chat_types import ChatTypeFilter
 from handlers.menu_processing import get_menu_content
 
@@ -19,20 +21,36 @@ user_private_router.message.filter(ChatTypeFilter(["private"]))
 
 # Этот хэндлер будет срабатывать на команду "/start"
 @user_private_router.message(CommandStart())
-async def process_start_command(message: types.Message):
+async def process_start_command(message: types.Message, state: FSMContext):
+    await state.clear()
     await message.answer(LEXICON[message.text])
 
 
 # Этот хэндлер будет срабатывать на команду "/help"
 # и отправлять пользователю сообщение со списком доступных команд в боте
 @user_private_router.message(Command(commands='help'))
-async def process_help_command(message: types.Message):
+async def process_help_command(message: types.Message, state: FSMContext, dialog_manager: DialogManager):
+    await state.clear()
+    # await dialog_manager.start(state=,mode=StartMode.RESET_STACK)
     await message.answer(LEXICON[message.text])
 
 
 @user_private_router.message(Command(commands='main'))
-async def start_cmd(message: types.Message, session: AsyncSession, bot: Bot):
+async def start_cmd(message: types.Message, session: AsyncSession, state: FSMContext):
+    await state.clear()
+    try:
+        await message.delete_reply_markup()
+    except Exception as err:
+        print(err)
     media, reply_markup = await get_menu_content(session, level=0, menu_name=message.text)
+    await message.answer_photo(photo=media.media, reply_markup=reply_markup)
+
+
+@user_private_router.message(Command(commands='forecasts'))
+async def forecasts_command(message: types.Message, session: AsyncSession, state: FSMContext):
+    await message.delete_reply_markup()
+    await state.clear()
+    media, reply_markup = await get_menu_content(session, level=1, menu_name=message.text[1:])
     await message.answer_photo(photo=media.media, reply_markup=reply_markup)
 
 
@@ -85,10 +103,10 @@ async def input_guest_forecasts(message: types.Message, state: FSMContext, sessi
         media, reply_markup = await get_menu_content(session, level=0, menu_name="main")
         if data.get('forecast_id'):
             await orm_update_forecast(session, data['forecast_id'], data['owner'], data['guest'])
-            await message.answer_photo(photo=media.media, caption="Прогноз изменен", reply_markup=reply_markup)
+            await message.answer_photo(photo=media.media, caption="Прогноз изменен!", reply_markup=reply_markup)
         else:
             await orm_add_forecast(session, data['user_id'], data['game_id'], data['owner'], data['guest'])
-            await message.answer_photo(photo=media.media, caption="Прогноз добавлен", reply_markup=reply_markup)
+            await message.answer_photo(photo=media.media, caption="Прогноз добавлен!", reply_markup=reply_markup)
         await state.clear()
         GetForecasts.forecast_for_change = None
     else:

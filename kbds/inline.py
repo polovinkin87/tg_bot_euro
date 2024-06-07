@@ -20,7 +20,7 @@ def get_user_main_btns(*, level: int, sizes: tuple[int] = (2,)):
         "Прогнозы 🎲": "forecasts",
         "Турнирная таблица 📊": "table",
         "Календарь 🗓️": "calendar",
-        "Статистика 📌": "statistics",
+        # "Статистика 📌": "statistics",
         "Правила ❗️": "rules",
     }
     for text, menu_name in btns.items():
@@ -43,7 +43,7 @@ def get_user_forecasts_btns(*, level: int, sizes: tuple[int] = (1,)):
     return keyboard.adjust(*sizes).as_markup()
 
 
-def get_user_my_forecasts_btns(*, level: int, groups: list, sizes: tuple[int] = (4,)):
+def get_user_my_forecasts_btns(*, level: int, groups: list, sizes: tuple[int] = (3,)):
     keyboard = InlineKeyboardBuilder()
     for g in groups:
         keyboard.add(InlineKeyboardButton(text=g.name,

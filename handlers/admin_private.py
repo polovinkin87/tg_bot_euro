@@ -318,7 +318,7 @@ async def group_choice2(message: types.Message, state: FSMContext):
 @admin_router.message(AddGame.date_time, F.text)
 async def add_date_time(message: types.Message, state: FSMContext, session: AsyncSession):
     if message.text and message.text == "." and AddGame.game_for_change:
-        await state.update_data(date_time=AddGame.game_for_change.date_time)
+        await state.update_data(date_time=AddGame.game_for_change.date_time.strftime('%Y-%m-%d %H:%M'))
     else:
         try:
             re.fullmatch(r'\d{4}.\d{2}.\d{2} \d{2}:\d{2}', message.text)

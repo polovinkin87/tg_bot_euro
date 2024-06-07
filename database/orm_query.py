@@ -107,6 +107,12 @@ async def orm_add_forecast(session: AsyncSession, user_id: int, game_id: int, ow
     await session.commit()
 
 
+async def orm_get_forecasts_for_table(session: AsyncSession):
+    query = select(Forecast).options(joinedload(Forecast.user)).options(joinedload(Forecast.game))
+    result = await session.execute(query)
+    return result.scalars().all()
+
+
 async def orm_get_forecasts(session: AsyncSession, user_id: int, game_id: int):
     query = select(Forecast).filter(Forecast.user_id == user_id, Forecast.game_id == game_id)
     result = await session.execute(query)
@@ -114,7 +120,8 @@ async def orm_get_forecasts(session: AsyncSession, user_id: int, game_id: int):
 
 
 async def orm_get_all_forecasts(session: AsyncSession, game_id: int):
-    query = select(Forecast).filter(Forecast.game_id == game_id).options(joinedload(Forecast.user))
+    query = select(Forecast).filter(Forecast.game_id == game_id).options(joinedload(Forecast.user)).options(
+        joinedload(Forecast.game))
     result = await session.execute(query)
     return result.scalars().all()
 
@@ -124,7 +131,7 @@ async def orm_get_forecasts_by_two(session: AsyncSession, user_id: int, group_id
     alias = aliased(Forecast, subquery)
 
     query = select(Game).outerjoin(Game.forecast.of_type(alias), ).filter(Game.group_id == group_id).options(
-        contains_eager(Game.forecast.of_type(alias)), )
+        contains_eager(Game.forecast.of_type(alias)), ).order_by(Game.date_time)
 
     result = await session.execute(query)
     return result.unique().scalars().all()
