@@ -13,6 +13,7 @@ from dotenv import find_dotenv, load_dotenv
 from dialogs.all_forecasts import dialog_forecast_router, forecast_start_dialog, forecast_second_dialog
 from dialogs.calendar import dialogs_calendar_router, calendar_dialog
 from dialogs.rules import dialogs_rules_router, rules_dialog
+from dialogs.statistics import dialog_statistic_router, team_dialog
 from dialogs.table import dialogs_table_router, table_dialog
 from dialogs.user_data import start_dialog, dialogs_router
 from kbds.menu import set_main_menu
@@ -50,6 +51,8 @@ dp.include_router(dialogs_calendar_router)
 dp.include_router(calendar_dialog)
 dp.include_router(dialogs_rules_router)
 dp.include_router(rules_dialog)
+dp.include_router(dialog_statistic_router)
+dp.include_router(team_dialog)
 setup_dialogs(dp)
 dp.include_router(user_private_router)
 dp.include_router(user_group_router)

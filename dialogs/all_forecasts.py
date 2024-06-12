@@ -54,7 +54,7 @@ async def button_back_clicked_1(callback: CallbackQuery, widget: Button,
 
 forecast_start_dialog = Dialog(
     Window(
-        Const(text='Выберите группу:'),
+        Const(text='Выбери группу:'),
         # DynamicMedia("photo"),
         Group(
             Select(
@@ -110,8 +110,11 @@ async def all_forecasts_getter_3(dialog_manager: DialogManager, session: AsyncSe
         forecasts_str += (f'{forecasts.user.first_name} {forecasts.user.last_name} '
                           f'{forecasts.owner}:{forecasts.guest}\n')
 
-    if datetime.datetime.now() < data[0].game.date_time:
-        forecasts_str = '❌ Информация появится после начала матча ❌'
+    if len(data) > 0:
+        if datetime.datetime.now() < data[0].game.date_time:
+            forecasts_str = '❌ Информация появится после начала матча ❌'
+    else:
+        forecasts_str = '❌ Здесь пока нет ни одного прогноза ❌'
 
     # image_id = "AgACAgIAAxkBAANhZkXq0oL5SexKWFK8olhljU128YUAAizgMRtdzChKUjzXlpMJKfsBAAMCAAN5AAM1BA"
     # image = MediaAttachment(ContentType.PHOTO, file_id=MediaId(image_id))
@@ -132,7 +135,7 @@ async def button_back_clicked_3(callback: CallbackQuery, widget: Button,
 
 forecast_second_dialog = Dialog(
     Window(
-        Const(text='Выберите матч:'),
+        Const(text='Выбери матч:'),
         # DynamicMedia("photo"),
         Group(
             Select(
@@ -157,7 +160,7 @@ forecast_second_dialog = Dialog(
         state=SecondSG.window_1
     ),
     Window(
-        Const(text='Выберите матч:'),
+        Const(text='Выбери матч:'),
         # DynamicMedia("photo"),
         Group(
             Select(

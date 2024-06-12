@@ -20,7 +20,7 @@ def get_user_main_btns(*, level: int, sizes: tuple[int] = (2,)):
         "Прогнозы 🎲": "forecasts",
         "Турнирная таблица 📊": "table",
         "Календарь 🗓️": "calendar",
-        # "Статистика 📌": "statistics",
+        "Статистика 📌": "statistics",
         "Правила ❗️": "rules",
     }
     for text, menu_name in btns.items():

@@ -56,6 +56,12 @@ async def orm_get_game(session: AsyncSession, game_id: int):
     return result.scalar()
 
 
+async def orm_get_team_unique(session: AsyncSession):
+    query = select(Game.owner).group_by(Game.owner).union(select(Game.guest).group_by(Game.guest))
+    result = await session.execute(query)
+    return result.scalars().all()
+
+
 async def orm_update_game(session: AsyncSession, game_id: int, data):
     query = (
         update(Game)
@@ -131,6 +137,17 @@ async def orm_get_forecasts_by_two(session: AsyncSession, user_id: int, group_id
     alias = aliased(Forecast, subquery)
 
     query = select(Game).outerjoin(Game.forecast.of_type(alias), ).filter(Game.group_id == group_id).options(
+        contains_eager(Game.forecast.of_type(alias)), ).order_by(Game.date_time)
+
+    result = await session.execute(query)
+    return result.unique().scalars().all()
+
+
+async def orm_get_forecasts_for_calendar(session: AsyncSession, user_id: int):
+    subquery = select(Forecast).join(User).filter(User.user_id == user_id).subquery()
+    alias = aliased(Forecast, subquery)
+
+    query = select(Game).outerjoin(Game.forecast.of_type(alias), ).options(
         contains_eager(Game.forecast.of_type(alias)), ).order_by(Game.date_time)
 
     result = await session.execute(query)

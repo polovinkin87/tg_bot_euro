@@ -24,7 +24,7 @@ from kbds.reply import get_keyboard
 
 admin_router = Router()
 admin_router.message.filter(ChatTypeFilter(["private"]), IsAdmin())
-# locale.setlocale(locale.LC_ALL, ('ru_RU', 'UTF-8'))
+locale.setlocale(locale.LC_ALL, ('ru_RU', 'UTF-8'))
 
 ADMIN_KB = get_keyboard(
     "Добавить группу/стадию плэй-офф",
