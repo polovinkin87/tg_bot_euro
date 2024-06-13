@@ -14,7 +14,7 @@ jobs:
   build_and_push:
     # На каком виртуальном сервере будет выполняться задача
     # В данном случае, на свежайшей версии Ubuntu. Неплохой выбор.
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-jammy
     # Шаги выполнения задачи (о них ниже по тексту)
     steps:
       - name: Login to Docker Hub
