@@ -33,10 +33,3 @@ rules_dialog = Dialog(
         state=RulesSG.start,
     ),
 )
-
-
-# Это классический хэндлер на команду rules
-@rules_dialog.message(Command(commands='rules'))
-async def command_rules_process(message: types.Message, dialog_manager: DialogManager):
-    await dialog_manager.done()
-    await dialog_manager.start(state=RulesSG.start, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)

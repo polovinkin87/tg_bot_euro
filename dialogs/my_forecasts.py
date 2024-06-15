@@ -53,9 +53,7 @@ async def button_back_clicked(callback: CallbackQuery, widget: Button,
 async def go_to_forecasts(callback: CallbackQuery, widget: Select,
                           dialog_manager: DialogManager, item_id: str):
     game = await orm_get_game(dialog_manager.middleware_data.get('session'), int(item_id))
-    print(datetime.datetime.now() + datetime.timedelta(hours=2))
-    print(game.date_time)
-    if datetime.datetime.now() + datetime.timedelta(hours=2) < game.date_time:
+    if datetime.datetime.now() + datetime.timedelta(hours=4) < game.date_time:
         await dialog_manager.start(state=EditForecasts.goals_owner, mode=StartMode.RESET_STACK,
                                    data={'game_id': int(item_id)})
     else:

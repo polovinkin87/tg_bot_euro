@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.orm_query import orm_get_game, orm_update_forecast, orm_check_user, \
     orm_get_forecasts, orm_add_forecast
+from dialogs.state import CalendarSG, TeamSG, RulesSG
 from dialogs.table import TableSG
 from filters.chat_types import ChatTypeFilter
 from handlers.menu_processing import get_menu_content
@@ -35,11 +36,32 @@ async def process_help_command(message: types.Message, state: FSMContext, dialog
     await message.answer(LEXICON[message.text])
 
 
+# Этот хэндлер будет срабатывать на команду "/table"
 @user_private_router.message(Command(commands='table'))
 async def command_table_process(message: types.Message, dialog_manager: DialogManager):
     await dialog_manager.done()
     await dialog_manager.start(state=TableSG.start, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
 
+
+# Этот хэндлер будет срабатывать на команду "/calendar"
+@user_private_router.message(Command(commands='calendar'))
+async def command_calendar_process(message: types.Message, dialog_manager: DialogManager):
+    await dialog_manager.done()
+    await dialog_manager.start(state=CalendarSG.window_1, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
+
+
+# Это классический хэндлер на команду statistics
+@user_private_router.message(Command(commands='statistics'))
+async def command_statistic_process(message: types.Message, dialog_manager: DialogManager):
+    await dialog_manager.done()
+    await dialog_manager.start(state=TeamSG.start, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
+
+
+# Это классический хэндлер на команду rules
+@user_private_router.message(Command(commands='rules'))
+async def command_rules_process(message: types.Message, dialog_manager: DialogManager):
+    await dialog_manager.done()
+    await dialog_manager.start(state=RulesSG.start, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
 
 # @user_private_router.message(Command(commands='main'))
 # async def start_cmd(message: types.Message, session: AsyncSession, state: FSMContext):

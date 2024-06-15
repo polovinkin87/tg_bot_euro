@@ -140,9 +140,3 @@ calendar_dialog = Dialog(
     ),
 )
 
-
-# Это классический хэндлер на команду calendar@dialogs_calendar_router.message(Command(commands='calendar'))
-@dialogs_calendar_router.message(Command(commands='calendar'))
-async def command_calendar_process(message: types.Message, dialog_manager: DialogManager):
-    await dialog_manager.done()
-    await dialog_manager.start(state=CalendarSG.window_1, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)

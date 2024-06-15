@@ -143,10 +143,3 @@ team_dialog = Dialog(
         state=TeamSG.team_list
     ),
 )
-
-
-# Это классический хэндлер на команду calendar
-@dialog_statistic_router.message(Command(commands='statistics'))
-async def command_statistic_process(message: types.Message, dialog_manager: DialogManager):
-    await dialog_manager.done()
-    await dialog_manager.start(state=TeamSG.start, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)

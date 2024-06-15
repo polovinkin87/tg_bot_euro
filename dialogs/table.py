@@ -88,10 +88,3 @@ table_dialog = Dialog(
         state=TableSG.start,
     ),
 )
-
-
-# Это классический хэндлер на команду table
-@dialogs_table_router.message(Command(commands='table'))
-async def command_table_process(message: types.Message, dialog_manager: DialogManager):
-    await dialog_manager.done()
-    await dialog_manager.start(state=TableSG.start, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)

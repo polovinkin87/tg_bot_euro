@@ -119,7 +119,7 @@ async def all_forecasts_getter_3(dialog_manager: DialogManager, session: AsyncSe
 
     if len(data) > 0:
         if (datetime.datetime.now() + datetime.timedelta(hours=3) < data[0].game.date_time
-                or dialog_manager.event.from_user.id not in bot.my_admins_list):
+                and dialog_manager.event.from_user.id not in bot.my_admins_list):
             forecasts_str = '❌ Информация появится после начала матча ❌'
     else:
         forecasts_str = '❌ Здесь пока нет ни одного прогноза ❌'
