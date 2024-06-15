@@ -21,12 +21,12 @@ dialog_forecast_router = Router()
 
 async def get_photo(group_id):
     images = {
-        1: 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA',
-        2: 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA',
-        3: 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA',
-        4: 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA',
-        5: 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA',
-        6: 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA',
+        1: 'AgACAgIAAxkBAAIL0GZt5QpMLqJgQrrGNBw-ZBCi6F78AAIc2zEb0a1wSw-yA3WmjlSZAQADAgADeAADNQQ',
+        2: 'AgACAgIAAxkBAAIL0mZt5XmC2AogRbwgrJNvyDq2A8fCAAIe2zEb0a1wSzQlzl4HdXs9AQADAgADeAADNQQ',
+        3: 'AgACAgIAAxkBAAIL1GZt5a5ITYrtglgMHQO6hWHpZBTSAAIi2zEb0a1wS-w4WFByD90rAQADAgADeAADNQQ',
+        4: 'AgACAgIAAxkBAAIL1mZt5eFeOZQCGg0tbw-qbXz1FEHPAAIj2zEb0a1wS-hvTyH0gBdqAQADAgADeAADNQQ',
+        5: 'AgACAgIAAxkBAAIL2GZt5kZfLWrjunPMBsQViVwz1q90AAIk2zEb0a1wSwTRETTo4gnMAQADAgADeAADNQQ',
+        6: 'AgACAgIAAxkBAAIL2mZt5rEg3lVAIPaNkMQOeHNZsAcRAAI12zEb0a1wSyM-m5QekbTYAQADAgADeAADNQQ',
     }
     image_forecasts = MediaAttachment(ContentType.PHOTO, file_id=MediaId(images[group_id]))
     return image_forecasts
@@ -44,7 +44,7 @@ async def get_groups(dialog_manager: DialogManager, bot: Bot, session: AsyncSess
     data = await orm_get_groups(session)
     groups_list = [(group.name, group.id) for group in data]
 
-    image_id = 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA'
+    image_id = 'AgACAgIAAxkBAAIL3GZt5x9suaIqIM6y9qFnk9IkraXzAAKz2jEb0a1wSwVDJu1HSpPOAQADAgADeAADNQQ'
     image = MediaAttachment(ContentType.PHOTO, file_id=MediaId(image_id))
     return {'groups': groups_list, 'photo': image}
 

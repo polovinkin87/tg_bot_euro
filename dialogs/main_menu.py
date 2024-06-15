@@ -19,7 +19,7 @@ async def get_photo(**kwargs):
     image_main_id = 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA'
     image_main = MediaAttachment(ContentType.PHOTO, file_id=MediaId(image_main_id))
 
-    image_forecasts_id = 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA'
+    image_forecasts_id = 'AgACAgIAAxkBAAILzmZt5HlFVej5zIRoUrcyEZTuPXUZAAJU5DEbDs9hS_nWUPrKH2ZiAQADAgADeAADNQQ'
     image_forecasts = MediaAttachment(ContentType.PHOTO, file_id=MediaId(image_forecasts_id))
     return {'photo_main': image_main, 'photo_forecasts': image_forecasts}
 

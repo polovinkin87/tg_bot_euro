@@ -1,3 +1,5 @@
+import datetime
+
 from aiogram import Router
 from aiogram.enums import ContentType
 from aiogram.types import CallbackQuery
@@ -8,7 +10,7 @@ from aiogram_dialog.widgets.media import DynamicMedia
 from aiogram_dialog.widgets.text import Const, Format
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.orm_query import orm_get_groups, orm_get_forecasts_by_two
+from database.orm_query import orm_get_groups, orm_get_forecasts_by_two, orm_get_game
 from dialogs.state import MyForecasts, MainSG, EditForecasts
 
 my_forecasts_router = Router()
@@ -16,12 +18,12 @@ my_forecasts_router = Router()
 
 async def get_photo(group_id):
     images = {
-        1: 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA',
-        2: 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA',
-        3: 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA',
-        4: 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA',
-        5: 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA',
-        6: 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA',
+        1: 'AgACAgIAAxkBAAIL0GZt5QpMLqJgQrrGNBw-ZBCi6F78AAIc2zEb0a1wSw-yA3WmjlSZAQADAgADeAADNQQ',
+        2: 'AgACAgIAAxkBAAIL0mZt5XmC2AogRbwgrJNvyDq2A8fCAAIe2zEb0a1wSzQlzl4HdXs9AQADAgADeAADNQQ',
+        3: 'AgACAgIAAxkBAAIL1GZt5a5ITYrtglgMHQO6hWHpZBTSAAIi2zEb0a1wS-w4WFByD90rAQADAgADeAADNQQ',
+        4: 'AgACAgIAAxkBAAIL1mZt5eFeOZQCGg0tbw-qbXz1FEHPAAIj2zEb0a1wS-hvTyH0gBdqAQADAgADeAADNQQ',
+        5: 'AgACAgIAAxkBAAIL2GZt5kZfLWrjunPMBsQViVwz1q90AAIk2zEb0a1wSwTRETTo4gnMAQADAgADeAADNQQ',
+        6: 'AgACAgIAAxkBAAIL2mZt5rEg3lVAIPaNkMQOeHNZsAcRAAI12zEb0a1wSyM-m5QekbTYAQADAgADeAADNQQ',
     }
     image_forecasts = MediaAttachment(ContentType.PHOTO, file_id=MediaId(images[group_id]))
     return image_forecasts
@@ -37,7 +39,7 @@ async def get_groups(dialog_manager: DialogManager, session: AsyncSession, **kwa
     data = await orm_get_groups(session)
     groups_list = [(group.name, group.id) for group in data]
 
-    image_id = 'AgACAgIAAxkBAAMJZj0EPhSkumlUjht4lBLLbMNqURYAApHcMRsEBelJ5f3hpmC0rnQBAAMCAAN5AAM1BA'
+    image_id = 'AgACAgIAAxkBAAIL3GZt5x9suaIqIM6y9qFnk9IkraXzAAKz2jEb0a1wSwVDJu1HSpPOAQADAgADeAADNQQ'
     image = MediaAttachment(ContentType.PHOTO, file_id=MediaId(image_id))
     return {'groups': groups_list, 'photo': image}
 
@@ -50,8 +52,12 @@ async def button_back_clicked(callback: CallbackQuery, widget: Button,
 
 async def go_to_forecasts(callback: CallbackQuery, widget: Select,
                           dialog_manager: DialogManager, item_id: str):
-    await dialog_manager.start(state=EditForecasts.goals_owner, mode=StartMode.RESET_STACK,
-                               data={'game_id': int(item_id)})
+    game = await orm_get_game(dialog_manager.middleware_data.get('session'), int(item_id))
+    if datetime.datetime.now() + datetime.timedelta(hours=2) < game.date_time:
+        await dialog_manager.start(state=EditForecasts.goals_owner, mode=StartMode.RESET_STACK,
+                                   data={'game_id': int(item_id)})
+    else:
+        await callback.answer(text='Ты не успел сделать ставку!')
 
 
 async def my_forecasts_getter_1(dialog_manager: DialogManager, session: AsyncSession, **kwargs):
