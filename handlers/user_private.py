@@ -2,7 +2,7 @@ from aiogram import F, types, Router, Bot, Dispatcher
 from aiogram.filters import CommandStart, StateFilter, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from aiogram_dialog import DialogManager, StartMode
+from aiogram_dialog import DialogManager, StartMode, ShowMode
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -33,6 +33,12 @@ async def process_help_command(message: types.Message, state: FSMContext, dialog
     await state.clear()
     # await dialog_manager.start(state=,mode=StartMode.RESET_STACK)
     await message.answer(LEXICON[message.text])
+
+
+@user_private_router.message(Command(commands='table'))
+async def command_table_process(message: types.Message, dialog_manager: DialogManager):
+    await dialog_manager.done()
+    await dialog_manager.start(state=TableSG.start, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
 
 
 # @user_private_router.message(Command(commands='main'))

@@ -110,7 +110,7 @@ async def all_forecasts_getter_2(dialog_manager: DialogManager, session: AsyncSe
     return {'games': games_list[3:], 'photo': photo}
 
 
-async def all_forecasts_getter_3(dialog_manager: DialogManager, session: AsyncSession, **kwargs):
+async def all_forecasts_getter_3(dialog_manager: DialogManager, session: AsyncSession, bot: Bot, **kwargs):
     data = await orm_get_all_forecasts(session, dialog_manager.dialog_data.get('game_id'))
     forecasts_str = ''
     for forecasts in data:
@@ -118,7 +118,8 @@ async def all_forecasts_getter_3(dialog_manager: DialogManager, session: AsyncSe
                           f'{forecasts.owner}:{forecasts.guest}\n')
 
     if len(data) > 0:
-        if datetime.datetime.now() + datetime.timedelta(hours=3) < data[0].game.date_time:
+        if (datetime.datetime.now() + datetime.timedelta(hours=3) < data[0].game.date_time
+                or dialog_manager.event.from_user.id not in bot.my_admins_list):
             forecasts_str = '❌ Информация появится после начала матча ❌'
     else:
         forecasts_str = '❌ Здесь пока нет ни одного прогноза ❌'

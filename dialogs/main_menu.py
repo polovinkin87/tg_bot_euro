@@ -91,9 +91,9 @@ async def start_cmd(message: types.Message, dialog_manager: DialogManager):
     await dialog_manager.start(state=MainSG.forecasts, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
 
 
-@main_menu_router.message(F.photo)
-async def add_image(message: types.Message):
-    if message.photo:
-        await message.answer(message.photo[-1].file_id)
-    else:
-        await message.answer("Отправьте фото пищи")
+# @main_menu_router.message(F.photo)
+# async def add_image(message: types.Message):
+#     if message.photo:
+#         await message.answer(message.photo[-1].file_id)
+#     else:
+#         await message.answer("Отправьте фото пищи")
