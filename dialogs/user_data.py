@@ -100,7 +100,7 @@ start_dialog = Dialog(
         ),
         MessageInput(
             func=no_text,
-            content_types=ContentType.ANY
+            content_types=ContentType.TEXT
         ),
         state=UserSG.first_name,
     ),

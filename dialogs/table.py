@@ -1,8 +1,7 @@
 import datetime
 
-from aiogram import Router, F, types, Bot
+from aiogram import Router, types, Bot
 from aiogram.filters import Command
-from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import Dialog, DialogManager, StartMode, Window, ShowMode
 
@@ -11,27 +10,13 @@ from aiogram_dialog.widgets.text import Const, Format
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.orm_query import orm_get_forecasts_for_table
+from dialogs.state import MainSG, TableSG
 from filters.chat_types import IsAdmin
-from handlers.menu_processing import main_menu
-from kbds.inline import MenuCallbackData
 
 dialogs_table_router = Router()
 
 
 # dialogs_table_router.callback_query.filter(UserAuth())
-
-
-class TableSG(StatesGroup):
-    start = State()
-
-
-async def button_back_clicked(callback: CallbackQuery, widget: Button,
-                              dialog_manager: DialogManager):
-    await dialog_manager.done()
-    await callback.message.delete()
-    media, reply_markup = await main_menu(level=0)
-    await callback.message.answer_photo(photo=media.media, reply_markup=reply_markup)
-    await callback.answer()
 
 
 async def table_getter(dialog_manager: DialogManager, session: AsyncSession, bot: Bot, **kwargs):
@@ -83,14 +68,20 @@ async def table_getter(dialog_manager: DialogManager, session: AsyncSession, bot
     return {'table': user_str, 'admin': is_admin, 'last_time': left_before}
 
 
+async def button_back_clicked(callback: CallbackQuery, widget: Button,
+                              dialog_manager: DialogManager):
+    await dialog_manager.done()
+    await dialog_manager.start(state=MainSG.start, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
+
+
 table_dialog = Dialog(
     Window(
-        Format(text='{table}', when='admin'),
-        Format(text='Здесь пока пусто. Таблица появится после первого сыгранного матча, а именно через:'
-                    '\n\n<b>{last_time}</b>'),
+        Format(text='{table}'),
+        # Format(text='Здесь пока пусто. Таблица появится после первого сыгранного матча, а именно через:'
+        #             '\n\n<b>{last_time}</b>'),
         Button(
             text=Const('Назад ⬅️'),
-            id='button_back',
+            id='button_cancel',
             on_click=button_back_clicked,
         ),
         getter=table_getter,
@@ -100,12 +91,7 @@ table_dialog = Dialog(
 
 
 # Это классический хэндлер на команду table
-@dialogs_table_router.callback_query(MenuCallbackData.filter(F.menu_name == 'table'))
-async def command_start_process(callback: types.CallbackQuery, callback_data: MenuCallbackData,
-                                dialog_manager: DialogManager):
-    await dialog_manager.start(state=TableSG.start, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
-
-
 @dialogs_table_router.message(Command(commands='table'))
 async def command_table_process(message: types.Message, dialog_manager: DialogManager):
+    await dialog_manager.done()
     await dialog_manager.start(state=TableSG.start, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)

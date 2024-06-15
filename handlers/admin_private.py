@@ -5,7 +5,7 @@ import locale
 from aiogram import F, Router, types
 from aiogram.filters import Command, StateFilter, or_f
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.state import State, StatesGroup, default_state
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,6 +16,7 @@ from database.orm_query import (
     orm_get_games,
     orm_update_game, orm_add_group, orm_delete_game,
 )
+from dialogs.state import MainSG
 
 from filters.chat_types import ChatTypeFilter, IsAdmin
 
@@ -38,7 +39,8 @@ ADMIN_KB = get_keyboard(
 
 
 @admin_router.message(Command("admin"))
-async def admin_features(message: types.Message):
+async def admin_features(message: types.Message, state: FSMContext):
+    await state.clear()
     await message.answer("Что хотите сделать?", reply_markup=ADMIN_KB)
 
 
@@ -47,7 +49,7 @@ class AddGroup(StatesGroup):
 
 
 # Становимся в состояние ожидания ввода group
-@admin_router.message(StateFilter(None), F.text == 'Добавить группу/стадию плэй-офф')
+@admin_router.message(F.text == 'Добавить группу/стадию плэй-офф')
 async def add_group(message: types.Message, state: FSMContext):
     await message.answer(
         "Введите название группы/стадии плэй-офф", reply_markup=types.ReplyKeyboardRemove()

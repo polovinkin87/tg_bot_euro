@@ -12,6 +12,9 @@ from dotenv import find_dotenv, load_dotenv
 
 from dialogs.all_forecasts import dialog_forecast_router, forecast_start_dialog, forecast_second_dialog
 from dialogs.calendar import dialogs_calendar_router, calendar_dialog
+from dialogs.edit_forecasts import edit_forecasts_router, edit_forecasts_dialog
+from dialogs.main_menu import main_menu_router, main_dialog
+from dialogs.my_forecasts import my_forecasts_router, my_forecasts_dialog
 from dialogs.rules import dialogs_rules_router, rules_dialog
 from dialogs.statistics import dialog_statistic_router, team_dialog
 from dialogs.table import dialogs_table_router, table_dialog
@@ -40,6 +43,12 @@ bot.my_admins_list = []
 
 dp = Dispatcher(storage=storage)
 
+dp.include_router(user_private_router)
+dp.include_router(user_group_router)
+dp.include_router(admin_router)
+
+dp.include_router(main_menu_router)
+dp.include_router(main_dialog)
 dp.include_router(dialogs_router)
 dp.include_router(start_dialog)
 dp.include_router(dialog_forecast_router)
@@ -53,10 +62,11 @@ dp.include_router(dialogs_rules_router)
 dp.include_router(rules_dialog)
 dp.include_router(dialog_statistic_router)
 dp.include_router(team_dialog)
+dp.include_router(my_forecasts_router)
+dp.include_router(my_forecasts_dialog)
+dp.include_router(edit_forecasts_router)
+dp.include_router(edit_forecasts_dialog)
 setup_dialogs(dp)
-dp.include_router(user_private_router)
-dp.include_router(user_group_router)
-dp.include_router(admin_router)
 
 
 async def on_startup(bot):

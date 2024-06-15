@@ -1,24 +1,15 @@
-from aiogram import Router, types, F
+from aiogram import Router, types
 from aiogram.filters import Command
-from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import CallbackQuery
 from aiogram_dialog import DialogManager, StartMode, ShowMode, Dialog, Window
-from aiogram_dialog.widgets.kbd import Button, Next, Back
+from aiogram_dialog.widgets.kbd import Button, Next, Back, Cancel
 from aiogram_dialog.widgets.text import Format, Const
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.orm_query import orm_get_forecasts_for_calendar
-from handlers.menu_processing import main_menu
-from kbds.inline import MenuCallbackData
+from dialogs.state import CalendarSG, MainSG
 
 dialogs_calendar_router = Router()
-
-
-class CalendarSG(StatesGroup):
-    window_1 = State()
-    window_2 = State()
-    window_3 = State()
-    window_4 = State()
 
 
 async def all_forecasts_getter_1(dialog_manager: DialogManager, session: AsyncSession, **kwargs):
@@ -81,10 +72,7 @@ async def all_forecasts_getter_4(dialog_manager: DialogManager, session: AsyncSe
 async def button_back_clicked(callback: CallbackQuery, widget: Button,
                               dialog_manager: DialogManager):
     await dialog_manager.done()
-    await callback.message.delete()
-    media, reply_markup = await main_menu(level=0)
-    await callback.message.answer_photo(photo=media.media, reply_markup=reply_markup)
-    await callback.answer()
+    await dialog_manager.start(state=MainSG.start, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
 
 
 # calendar_dialog = Dialog(
@@ -106,7 +94,7 @@ calendar_dialog = Dialog(
         Next(Const('Следующие ▶️'), id='b_next'),
         Button(
             text=Const('Назад ⬅️'),
-            id='button_back',
+            id='button_cancel',
             on_click=button_back_clicked,
         ),
         getter=all_forecasts_getter_1,
@@ -119,7 +107,7 @@ calendar_dialog = Dialog(
         Back(Const('Предыдущие ◀️'), id='b_back'),
         Button(
             text=Const('Назад ⬅️'),
-            id='button_back',
+            id='button_cancel',
             on_click=button_back_clicked,
         ),
         getter=all_forecasts_getter_2,
@@ -132,7 +120,7 @@ calendar_dialog = Dialog(
         Back(Const('Предыдущие ◀️'), id='b_back'),
         Button(
             text=Const('Назад ⬅️'),
-            id='button_back',
+            id='button_cancel',
             on_click=button_back_clicked,
         ),
         getter=all_forecasts_getter_3,
@@ -144,7 +132,7 @@ calendar_dialog = Dialog(
         Back(Const('Предыдущие ◀️'), id='b_back'),
         Button(
             text=Const('Назад ⬅️'),
-            id='button_back',
+            id='button_cancel',
             on_click=button_back_clicked,
         ),
         getter=all_forecasts_getter_4,
@@ -153,13 +141,8 @@ calendar_dialog = Dialog(
 )
 
 
-# Это классический хэндлер на команду calendar
-@dialogs_calendar_router.callback_query(MenuCallbackData.filter(F.menu_name == 'calendar'))
-async def command_start_process(callback: types.CallbackQuery, callback_data: MenuCallbackData,
-                                dialog_manager: DialogManager):
-    await dialog_manager.start(state=CalendarSG.window_1, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
-
-
+# Это классический хэндлер на команду calendar@dialogs_calendar_router.message(Command(commands='calendar'))
 @dialogs_calendar_router.message(Command(commands='calendar'))
 async def command_calendar_process(message: types.Message, dialog_manager: DialogManager):
+    await dialog_manager.done()
     await dialog_manager.start(state=CalendarSG.window_1, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
