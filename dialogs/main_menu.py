@@ -81,7 +81,10 @@ main_dialog = Dialog(
 
 @main_menu_router.message(Command(commands='main'))
 async def start_cmd(message: types.Message, dialog_manager: DialogManager):
-    await dialog_manager.done()
+    try:
+        await dialog_manager.done()
+    except Exception as err:
+        print(err)
     await dialog_manager.start(state=MainSG.start, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
 
 
