@@ -24,6 +24,7 @@ async def get_photo(group_id):
         4: 'AgACAgIAAxkBAAIL1mZt5eFeOZQCGg0tbw-qbXz1FEHPAAIj2zEb0a1wS-hvTyH0gBdqAQADAgADeAADNQQ',
         5: 'AgACAgIAAxkBAAIL2GZt5kZfLWrjunPMBsQViVwz1q90AAIk2zEb0a1wSwTRETTo4gnMAQADAgADeAADNQQ',
         6: 'AgACAgIAAxkBAAIL2mZt5rEg3lVAIPaNkMQOeHNZsAcRAAI12zEb0a1wSyM-m5QekbTYAQADAgADeAADNQQ',
+        7: 'AgACAgIAAxkBAAIYTGZ8I6wq9pW0Wy9Imq16tjhD5G_hAAI32jEb39LgS3ulwx162k-VAQADAgADeAADNQQ',
     }
     image_forecasts = MediaAttachment(ContentType.PHOTO, file_id=MediaId(images[group_id]))
     return image_forecasts
