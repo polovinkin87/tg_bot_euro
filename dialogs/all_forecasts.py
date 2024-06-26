@@ -67,12 +67,12 @@ forecast_start_dialog = Dialog(
                 items='groups',
                 on_click=groups_selection,
             ),
-            Button(
-                text=Const('Назад ⬅️'),
-                id='button_cancel',
-                on_click=button_back_clicked
-            ),
             width=3
+        ),
+        Button(
+            text=Const('Назад ⬅️'),
+            id='button_cancel',
+            on_click=button_back_clicked
         ),
         state=ForecastsSG.group,
         getter=get_groups,
