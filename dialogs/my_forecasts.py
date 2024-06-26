@@ -96,8 +96,8 @@ async def my_forecasts_getter_2(dialog_manager: DialogManager, session: AsyncSes
 
 my_forecasts_dialog = Dialog(
     Window(
-        DynamicMedia('photo'),
         Const(text='Выбери группу 👇'),
+        DynamicMedia('photo'),
         Group(
             Select(
                 Format('{item[0]}'),
