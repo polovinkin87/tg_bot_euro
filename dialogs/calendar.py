@@ -64,7 +64,7 @@ async def all_forecasts_getter_4(dialog_manager: DialogManager, session: AsyncSe
     for game in data[39:]:
         text += (f"{game.owner} - {game.guest} <b>{game.forecast[0].owner if game.forecast else ''}"
                  f"{':' if game.forecast else ''}"
-                 f"{game.forecast[0].guest if game.forecast else game.date_time.strftime('%d %B %H:%M')}<b>\n")
+                 f"{game.forecast[0].guest if game.forecast else game.date_time.strftime('%d %B %H:%M')}</b>\n")
 
     return {'games': text}
 
