@@ -25,6 +25,7 @@ async def get_photo(group_id):
         5: 'AgACAgIAAxkBAAIL2GZt5kZfLWrjunPMBsQViVwz1q90AAIk2zEb0a1wSwTRETTo4gnMAQADAgADeAADNQQ',
         6: 'AgACAgIAAxkBAAIL2mZt5rEg3lVAIPaNkMQOeHNZsAcRAAI12zEb0a1wSyM-m5QekbTYAQADAgADeAADNQQ',
         7: 'AgACAgIAAxkBAAIYTGZ8I6wq9pW0Wy9Imq16tjhD5G_hAAI32jEb39LgS3ulwx162k-VAQADAgADeAADNQQ',
+        8: 'AgACAgIAAxkBAAIYTGZ8I6wq9pW0Wy9Imq16tjhD5G_hAAI32jEb39LgS3ulwx162k-VAQADAgADeAADNQQ',
     }
     image_forecasts = MediaAttachment(ContentType.PHOTO, file_id=MediaId(images[group_id]))
     return image_forecasts
@@ -66,7 +67,7 @@ async def my_forecasts_getter_1(dialog_manager: DialogManager, session: AsyncSes
                                           group_id=dialog_manager.dialog_data.get('group_id'))
 
     games = []
-    for game in data[:3]:
+    for game in data[:4]:
         text = ''
         text += (f"{game.owner} - {game.guest} "
                  f"{'' if len(game.forecast) == 0 else game.forecast[0].owner}"
@@ -83,7 +84,7 @@ async def my_forecasts_getter_2(dialog_manager: DialogManager, session: AsyncSes
                                           group_id=dialog_manager.dialog_data.get('group_id'))
 
     games = []
-    for game in data[3:]:
+    for game in data[4:]:
         text = ''
         text += (f"{game.owner} - {game.guest} "
                  f"{'' if len(game.forecast) == 0 else game.forecast[0].owner}"

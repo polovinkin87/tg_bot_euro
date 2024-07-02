@@ -28,6 +28,7 @@ async def get_photo(group_id):
         5: 'AgACAgIAAxkBAAIL2GZt5kZfLWrjunPMBsQViVwz1q90AAIk2zEb0a1wSwTRETTo4gnMAQADAgADeAADNQQ',
         6: 'AgACAgIAAxkBAAIL2mZt5rEg3lVAIPaNkMQOeHNZsAcRAAI12zEb0a1wSyM-m5QekbTYAQADAgADeAADNQQ',
         7: 'AgACAgIAAxkBAAIYTmZ8JFH9K3l188DxwKMf5kr6p6MdAAI42jEb39LgSwY7NODCp_BeAQADAgADeAADNQQ',
+        8: 'AgACAgIAAxkBAAIYTmZ8JFH9K3l188DxwKMf5kr6p6MdAAI42jEb39LgSwY7NODCp_BeAQADAgADeAADNQQ',
     }
     image_forecasts = MediaAttachment(ContentType.PHOTO, file_id=MediaId(images[group_id]))
     return image_forecasts
@@ -100,7 +101,7 @@ async def all_forecasts_getter_1(dialog_manager: DialogManager, session: AsyncSe
     games_list = [(game.owner, game.guest, game.id) for game in data]
 
     photo = await get_photo(dialog_manager.start_data.get('group_id'))
-    return {'games': games_list[:3], 'photo': photo}
+    return {'games': games_list[:4], 'photo': photo}
 
 
 async def all_forecasts_getter_2(dialog_manager: DialogManager, session: AsyncSession, **kwargs):
@@ -108,7 +109,7 @@ async def all_forecasts_getter_2(dialog_manager: DialogManager, session: AsyncSe
     games_list = [(game.owner, game.guest, game.id) for game in data]
 
     photo = await get_photo(dialog_manager.start_data.get('group_id'))
-    return {'games': games_list[3:], 'photo': photo}
+    return {'games': games_list[4:], 'photo': photo}
 
 
 async def all_forecasts_getter_3(dialog_manager: DialogManager, session: AsyncSession, bot: Bot, **kwargs):
